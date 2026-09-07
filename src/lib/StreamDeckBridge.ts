@@ -36,12 +36,12 @@ export class StreamDeckBridge {
     const teleports = spots
       .filter(s => s.code() && s.spot.target?.origin)
       .map(s => ({
-        name: s.hover(),              // e.g. "Lodestone Network - Falador"
+        name: s.hover(),
         spot: {
           x: s.spot.target.origin.x,
           y: s.spot.target.origin.y,
         },
-        keybind: s.code(),            // e.g. "F", "Alt+A" — direct from teleport_data.ts
+        keybind: s.code(),
       }))
 
     StreamDeckBridge.ws.send(JSON.stringify({
