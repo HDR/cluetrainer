@@ -778,6 +778,8 @@ export default class ClueSolvingBehaviour extends Behaviour {
 
   protected begin() {
     this.app.map.addGameLayer(this.map_layer = new ClueSolvingMapLayer(this))
+    
+    StreamDeckBridge.connect()
 
     this.method_selector = new MethodSelector(this.app.favourites)
       .addClass("ctr-neosolving-solution-row")
