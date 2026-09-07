@@ -44,6 +44,7 @@ import {drawTileArea} from "../overlay3d/PathRender";
 import {Mesh} from "../overlay3d/meshes/Mesh";
 import {SimpleGLOverlay} from "../overlay3d/SimpleGLOverlay";
 import {FakeLodash} from "../../lib/coreutil/FakeLodash";
+import {StreamDeckBridge} from "../../lib/StreamDeckBridge";
 import span = C.span;
 import ScanTreeMethod = SolvingMethods.ScanTreeMethod;
 import interactionMarker = RenderingUtility.interactionMarker;
@@ -549,6 +550,16 @@ export default class ClueSolvingBehaviour extends Behaviour {
     }
 
     if (fit_target) this.fitToClue()
+    
+    
+    {
+      const targets = Clues.ClueSpot.targetArea({clue: step.step})
+      if (targets?.length > 0) {
+        const center = TileArea.activate(targets[0]).center()
+        const spots = this.map_layer.transport_layer.getTeleportSpots()
+        StreamDeckBridge.push(center, spots)
+      }
+    }
 
     if (this.app.settings.settings.teleport_customization.preset_bindings_active) {
       const active_preset = this.app.settings.settings.teleport_customization.active_preset
@@ -759,6 +770,7 @@ export default class ClueSolvingBehaviour extends Behaviour {
     this.active_method = null
     this.gl_overlay.set(null)
 
+    StreamDeckBridge.clear()
     log().log("Reset state", "Solving")
 
     return true
