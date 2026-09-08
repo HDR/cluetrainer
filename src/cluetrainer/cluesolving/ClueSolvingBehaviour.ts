@@ -556,11 +556,9 @@ export default class ClueSolvingBehaviour extends Behaviour {
       const targets = Clues.ClueSpot.targetArea({clue: step.step})
       if (targets?.length > 0) {
         const center = TileArea.activate(targets[0]).center()
-        const spots = this.map_layer.transport_layer.getTeleportSpots()
-        StreamDeckBridge.push(center, spots)
+        this.pushStreamDeck(center, state)
       }
     }
-
     if (this.app.settings.settings.teleport_customization.preset_bindings_active) {
       const active_preset = this.app.settings.settings.teleport_customization.active_preset
       const bound_preset = this.app.settings.settings.teleport_customization.preset_bindings[clue.tier]
@@ -638,6 +636,19 @@ export default class ClueSolvingBehaviour extends Behaviour {
         this.gl_overlay.set(new SimpleGLOverlay(mesh))
       })
     }
+  }
+
+  pushStreamDeck(center: TileCoordinates, state: ClueSolving.ClueState = this.state): void {
+    const tryPush = () => {
+      if (state != this.state) return
+      const spots = this.map_layer.transport_layer.getTeleportSpots()
+      if (spots.length > 0) {
+        StreamDeckBridge.push(center, spots)
+      } else {
+        setTimeout(tryPush, 100)
+      }
+    }
+    tryPush()
   }
 
   /**
@@ -981,4 +992,3 @@ export namespace ClueSolving {
     })
   }
 }
-

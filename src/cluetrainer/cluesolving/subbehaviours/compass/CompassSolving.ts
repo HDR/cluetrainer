@@ -418,6 +418,11 @@ export class CompassSolving extends ClueSolvingSubBehaviour {
   async setSelectedSpot(spot: CompassSolving.SpotData, set_as_solution: boolean) {
     this.selected_spot.set(spot)
 
+    if (spot) {
+      const area = this.clue.single_tile_target ? TileArea.fromTiles([spot.spot.spot]) : digSpotArea(spot.spot.spot)
+      this.parent.pushStreamDeck(TileArea.activate(area).center())
+    }
+
     await this.spot_selection_callback(spot?.spot?.spot)
 
     if (set_as_solution) {
@@ -589,6 +594,8 @@ export class CompassSolving extends ClueSolvingSubBehaviour {
     entry.preconfigured = null
 
     if (!is_compass_solution) entry.is_solution_of_previous_clue = undefined
+
+    this.parent.pushStreamDeck(CompassSolving.Spot.coords(entry.position).center())
 
     this.setSelection(this.entries.indexOf(entry))
 
